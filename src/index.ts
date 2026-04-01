@@ -261,7 +261,7 @@ Options:
   }
 
   channel.send('Chat started. Type your message below.');
-  channel.send('Commands: /exit or /quit to exit, /reset or /new to start a new session.');
+  channel.send('Commands: /exit or /quit to exit, /reset or /new to start a new session, /model to show current model.');
 
   while (true) {
     const userInput = await channel.listen();
@@ -269,6 +269,11 @@ Options:
     
     if (input === '/exit' || input === '/quit') {
       process.exit(0);
+    }
+
+    if (input === '/model') {
+      channel.send(`\nCurrent model: ${modelName}\n`);
+      continue;
     }
 
     if (input === '/reset' || input === '/new') {

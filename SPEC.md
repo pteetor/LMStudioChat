@@ -40,6 +40,7 @@ The user can enter one-line commands such as:
 
 - `/exit` or `/quit` - Exit the app
 - `/reset` or `/new` - Close the current LLM session and start a new session
+- `/model` - Reply with the name of the current LLM model
 
 ## Tools
 Create the tools defined in `doc/tools.md`
