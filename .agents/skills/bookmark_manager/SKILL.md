@@ -1,21 +1,30 @@
-# Bookmark Manager Skill
+---
+name: bookmark-manager-skill
+description: Use this skill to save and retrieve bookmarks,
+which are URLs with tags.
+---
 
-This skill allows you to save URLs with associated tags and later retrieve those URLs by searching for their tags.
+## File
+The bookmarks are saved in the file `workspace/bookmarks.jsonl`.
 
-## Functions
+## File format
+The file format is JSONL, so each line is a valid JSON object
+and each object has two elements.
 
-### `add_bookmark(url: str, tags: list[str])`
-Adds a new URL with a list of tags to your bookmarks.
+- `url` - A saved URL
+- `tags` - An array of strings
 
-- `url` (string, required): The web address to bookmark.
-- `tags` (list of strings, required): A list of keywords or categories for the bookmark.
+For example, one line might be
 
-### `search_bookmarks(tag_query: str)`
-Searches for bookmarked URLs by a specific tag (case-insensitive) and returns matching URLs along with their original tags.
+```
+{ "url": "http://www.example.com", "tags": [ "example", "random" ] }
+```
 
-- `tag_query` (string, required): The tag to search for.
+## Saving bookmarks
+To save a new bookmark, format the URL and tags as a JSON object
+and append to the bookmarks file.
+If the user does not provide at least one tag, ask for a tag.
 
-### `delete_bookmark(url: str)`
-Deletes a bookmark by its URL.
-
-- `url` (string, required): The URL of the bookmark to delete.
+# Searching for bookmarks
+To search for saved bookmarks by their tag,
+use `grep` to search the bookmarks file for lines that match the tag.

@@ -1,6 +1,7 @@
-# Evanston Weather Skill
-
-This skill retrieves the latest weather observation for Evanston, Illinois, using the National Weather Service (NWS) API, specifically from the KORD (Chicago O'Hare) station.
+---
+name: evanston-weather-skill
+description: Use this skill to retrieve the latest weather observation for Evanston, Illinois.
+---
 
 ## Usage
 
@@ -8,7 +9,7 @@ To get the raw GeoJSON weather data:
 
 ```bash
 curl -H "Accept: application/geo+json" \
-     -H "User-Agent: (nanobot-weather-skill, your-email@example.com)" \
+     -H "User-Agent: (maxwell-weather-skill, your-email@example.com)" \
      "https://api.weather.gov/stations/KORD/observations/latest"
 ```
 
@@ -17,7 +18,7 @@ curl -H "Accept: application/geo+json" \
 To extract specific values like temperature and conditions using `jq`:
 
 ```bash
-curl -s -H "User-Agent: (nanobot-weather-skill, your-email@example.com)" \
+curl -s -H "User-Agent: (maxwell-weather-skill, your-email@example.com)" \
      "https://api.weather.gov/stations/KORD/observations/latest" | \
      jq '.properties | {temp: .temperature.value, unit: .temperature.unitCode, description: .textDescription}'
 ```
