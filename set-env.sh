@@ -1,1 +1,1 @@
-. <(cat ../.env | grep -v '^#' | sed 's/^/export /')
+. <(cat .env | grep -v '^#' | sed 's/^/export /')
