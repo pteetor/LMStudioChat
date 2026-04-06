@@ -1,4 +1,5 @@
 import { parseArgs } from 'node:util';
+import * as fs from 'node:fs';
 
 // Suppress punycode deprecation warning
 const originalEmit = process.emit;
@@ -228,11 +229,18 @@ Options:
 
   const lmStudioLlm = new LMStudioLlm(modelName, baseUrl);
 
+  let systemInstruction = 'You are a helpful AI assistant.';
+  try {
+      systemInstruction = fs.readFileSync('MAXWELL.md', 'utf-8');
+  } catch (error) {
+      console.warn("Could not read MAXWELL.md, using default system instruction.");
+  }
+
   const agent = new LlmAgent({
     name: 'lm_studio_agent',
     description: 'An AI assistant powered by LM Studio.',
     model: lmStudioLlm,
-    instruction: 'You are a helpful AI assistant.',
+    instruction: systemInstruction,
     tools: [dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool],
   });
 
