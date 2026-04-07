@@ -228,7 +228,7 @@ class LMStudioLlm extends BaseLlm {
   }
 }
 
-import { dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool } from './tools.js';
+import { dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool } from './tools.js';
 
 async function main() {
   const { values } = parseArgs({
@@ -274,7 +274,7 @@ Options:
     description: 'An AI assistant powered by LM Studio.',
     model: lmStudioLlm,
     instruction: systemInstruction,
-    tools: [dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool],
+    tools: [dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool],
   });
 
   const runner = new InMemoryRunner({

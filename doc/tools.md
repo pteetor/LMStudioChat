@@ -75,10 +75,13 @@ Download a file from the web into the `downloads` directory of the workspace.
 
 - Arguments
     - `url` - string; the file's URL
+    - `filename` - optional string; name for the downloaded file
 - Returns a object with
     - `status` - string;
     - `path` - string; path of the output file, relative to the workspace directory
       (so it will always begin with `downloads/`.)
+
+If `filename` is missing, the agent will create a unique name.
 
 ## Shell tool
 Execute a shell command on the agent's host computer.

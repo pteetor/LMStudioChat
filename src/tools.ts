@@ -1,5 +1,5 @@
 import { FunctionTool } from '@google/adk';
-import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, mkdirSync } from 'fs';
 import { z } from 'zod';
 import * as path from 'path';
 
@@ -167,6 +167,52 @@ export const webSearchTool = new FunctionTool({
             }));
 
             return { results: topResults };
+        } catch (error) {
+            return { error: error instanceof Error ? error.message : String(error) };
+        }
+    }
+});
+export const webDownloadTool = new FunctionTool({
+    name: 'web_download',
+    description: 'Download a file from the web into the downloads directory of the workspace.',
+    parameters: z.object({
+        url: z.string().describe("the file's URL"),
+        name: z.string().optional().describe("optional name for the downloaded file")
+    }),
+    execute: async (args: any) => {
+        try {
+            const workspace = process.env.MAXWELL_WORKSPACE;
+            if (!workspace) {
+                throw new Error("MAXWELL_WORKSPACE environment variable is not defined");
+            }
+            if (!path.isAbsolute(workspace)) {
+                throw new Error("MAXWELL_WORKSPACE environment variable must be an absolute path");
+            }
+
+            const downloadsDir = path.join(workspace, 'downloads');
+            mkdirSync(downloadsDir, { recursive: true });
+
+            let fileName = args.name;
+            if (!fileName) {
+                fileName = `download_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+            }
+
+            const finalFilePath = path.join(downloadsDir, fileName);
+            const relativeFilePath = 'downloads/' + fileName;
+
+            const response = await fetch(args.url);
+            if (!response.ok) {
+                throw new Error(`Failed to download: ${response.status} ${response.statusText}`);
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            writeFileSync(finalFilePath, buffer);
+
+            return {
+                status: "success",
+                path: relativeFilePath
+            };
         } catch (error) {
             return { error: error instanceof Error ? error.message : String(error) };
         }
