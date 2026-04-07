@@ -21,10 +21,13 @@ For example, one line might be
 ```
 
 ## Saving bookmarks
-To save a new bookmark, format the URL and tags as a JSON object
+To save a new bookmark, format the URL and tags as a one-line JSON object
 and append to the bookmarks file.
+
 If the user does not provide at least one tag, ask for a tag.
+If they say there is no tag, use the tag "none".
 
 # Searching for bookmarks
-To search for saved bookmarks by their tag,
-use `grep` to search the bookmarks file for lines that match the tag.
+The user can ask to search the bookmarks for a given tag.
+Use the `jq` command to search the file. Use a case-insensitive comparison.
+Format the matching line nicely, if any.
