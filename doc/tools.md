@@ -53,8 +53,8 @@ This tool lets the LLM write files on the client computer.
 This tool lets the LLM append text to files on the client computer.
 
 - The arguments are
-    - `path` - the path of the file to be updated
-    - `content` - the character string to be appended to the file
+    - `path` - path of file to be updated
+    - `content` - character string to append to file
 - Absolute paths are *not* allowed
 - Relative paths are allowed.
 
@@ -69,3 +69,28 @@ The tool returns 5 search results.
 The web search tool uses the API of the Brave search engine.
 The Brave API key is available in the environment variable `BRAVE_API_KEY`,
 which must be defined.
+
+## Web download tool
+Download a file from the web into the `downloads` directory of the workspace.
+
+- Arguments
+    - `url` - string; the file's URL
+- Returns a object with
+    - `status` - string;
+    - `path` - string; path of the output file, relative to the workspace directory
+      (so it will always begin with `downloads/`.)
+
+## Shell tool
+Execute a shell command on the agent's host computer.
+
+- Arguments:
+    - `cmd` - string; the shell command
+    - `safe` - boolean; run in "safe mode" (see below)
+- Returns an object with
+    - `cmd` - string; the given shell command
+    - `status` - integer; the return code from the command execution
+    - `stdout` - string; the captured standard output
+    - `stderr` - string; the captured standard error
+
+In *safe mode*, the tool does not actually execute the given command.
+Rather, it traces the command on the console and returns a `status` of 2.

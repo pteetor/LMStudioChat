@@ -16,7 +16,7 @@ The app's loop is
 
 ## LM Studio server
 
-You can assume that this environment variable is set:
+You can assume that these environment variables are set:
 
 - `LM_STUDIO_BASE_URL` - Base URL for the LM Studio server
 - `LM_STUDIO_MODEL` - Name of the LLM model to use
@@ -31,16 +31,19 @@ If a password is demanded, however, just use the string "none".
 ## Channels
 A *channel* lets this app send and receive messages
 between itself an a user.
-There are several kinds of channels.
 
 Create the channels described in `doc/channels.md`.
 
 ## User commands
-The user can enter one-line commands such as:
+The user can enter these one-line commands:
 
 - `/exit` or `/quit` - Exit the app
 - `/reset` or `/new` - Close the current LLM session and start a new session
 - `/model` - Reply with the name of the current LLM model
+- `/url` - Reply with the URL of the LLM service
+
+## Command line options
+Implement the command line options described in `doc/command-line.md`.
 
 ## Tools
 Create the tools defined in `doc/tools.md`
@@ -48,12 +51,24 @@ and use the ADK to expose the tools to the LLM.
 
 ## File structure
 This is a multi-file project. TypeScript source code files are in the directory `src/`.
-Those files are
 
-- `src/index.ts`' - the main program
-- `src/tools.ts` - tool functions
-- `src/channel.ts` - `Channel` super class and its subclasses for managing user connections
-
-Future source files may include
-
-- `src/dashboard.ts` - `Dashboard` class for displaying the application dashboard
+- GEMINI.md - Directives for the Gemini coding agent
+- .gemini/
+    - settings.json - Gemini settings
+    - skills/ - Directory of skill definitions
+- MAXWELL.md - Directives for the user agent
+- README.md - Notes for humans
+- SPEC.md - Project specification
+- doc/ - Additional specifications and design notes
+- logs/ - Run-time log files
+- memory/
+    - sessions/ - Session logs
+- package.json
+- set-env.sh - Script for setting needed environment variables
+- src/
+    - channel.ts
+    - index.ts
+    - tools.ts
+- tsconfig.json
+- workspace/
+    - downloads/ - Files downloaded by the web download tool
