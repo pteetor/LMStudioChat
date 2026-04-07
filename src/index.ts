@@ -15,12 +15,45 @@ process.emit = function (name: any, data: any, ...args: any[]) {
   return originalEmit.apply(process, [name, data, ...args] as any);
 } as any;
 
-import { LlmAgent, BaseLlm, InMemoryRunner, setLogLevel, LogLevel } from '@google/adk';
-import type { LlmRequest, LlmResponse } from '@google/adk';
+import { LlmAgent, BaseLlm, InMemoryRunner, setLogLevel, LogLevel, setLogger } from '@google/adk';
+import type { LlmRequest, LlmResponse, Logger } from '@google/adk';
 import { ConsoleChannel, TelegramChannel, Channel } from './channel.js';
 
-// Disable INFO logs from ADK to keep the console clean for chat
-setLogLevel(LogLevel.ERROR);
+class FileLogger implements Logger {
+    private logFile: string;
+    private level: LogLevel = LogLevel.INFO;
+
+    constructor() {
+        const dirPath = 'logs';
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath, { recursive: true });
+        }
+        const dateStr = new Date().toISOString().split('T')[0];
+        this.logFile = `${dirPath}/log-${dateStr}.log`;
+    }
+
+    private writeLog(levelName: string, ...args: unknown[]) {
+        const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+        const timestamp = new Date().toISOString();
+        fs.appendFileSync(this.logFile, `[${timestamp}] [${levelName}] ${msg}\n`);
+    }
+
+    log(level: LogLevel, ...args: unknown[]): void {
+        if (level >= this.level) {
+            const levelName = LogLevel[level] || 'UNKNOWN';
+            this.writeLog(levelName, ...args);
+        }
+    }
+    debug(...args: unknown[]): void { this.log(LogLevel.DEBUG, ...args); }
+    info(...args: unknown[]): void { this.log(LogLevel.INFO, ...args); }
+    warn(...args: unknown[]): void { this.log(LogLevel.WARN, ...args); }
+    error(...args: unknown[]): void { this.log(LogLevel.ERROR, ...args); }
+    setLogLevel(level: LogLevel): void { this.level = level; }
+}
+
+// Route ADK logs to a file to keep the console clean for chat
+setLogger(new FileLogger());
+setLogLevel(LogLevel.INFO);
 
 function convertSchema(googleSchema: any): any {
     if (!googleSchema) return { type: 'object', properties: {} };
@@ -271,11 +304,66 @@ Options:
   channel.send('Chat started. Type your message below.');
   channel.send('Commands: /exit or /quit to exit, /reset or /new to start a new session, /model to show current model.');
 
+  async function saveCurrentSession() {
+      try {
+          const session = await runner.sessionService.getSession({
+              appName: 'LMStudioChat',
+              userId,
+              sessionId
+          });
+          
+          if (session && session.events) {
+              const history = session.events
+                  .map(e => {
+                      // Filter out events that contain tool calls or tool responses
+                      const hasToolCall = e.content?.parts?.some((p: any) => p.functionCall);
+                      const hasToolResponse = e.content?.parts?.some((p: any) => p.functionResponse);
+                      if (hasToolCall || hasToolResponse) return null;
+
+                      let text = e.content?.parts?.filter((p: any) => p.text).map((p: any) => p.text).join('\n');
+                      if (!text) return null;
+                      
+                      // Remove LLM thoughts (typically enclosed in <think>...</think> tags)
+                      text = text.replace(/<think>[\s\S]*?<\/think>\n*/g, '').trim();
+                      if (!text) return null;
+
+                      return {
+                          author: e.author === 'lm_studio_agent' ? 'assistant' : 'user',
+                          timestamp: e.timestamp,
+                          date: new Date(e.timestamp).toISOString(),
+                          text: text
+                      };
+                  })
+                  .filter(e => e !== null);
+
+              if (history.length > 0) {
+                  const dirPath = 'memory/sessions';
+                  if (!fs.existsSync(dirPath)) {
+                      fs.mkdirSync(dirPath, { recursive: true });
+                  }
+                  const dateStr = new Date().toISOString().replace(/[:.]/g, '-');
+                  const fileName = `${dirPath}/${dateStr}-${sessionId}.json`;
+                  fs.writeFileSync(fileName, JSON.stringify(history, null, 2));
+                  console.log(`\nSession saved to ${fileName}`);
+              }
+          }
+      } catch (err) {
+          console.error(`\nFailed to save session: ${err}`);
+      }
+  }
+
+  process.on('SIGINT', async () => {
+      console.log("\nCaught interrupt signal (SIGINT). Saving session...");
+      await saveCurrentSession();
+      process.exit(0);
+  });
+
   while (true) {
     const userInput = await channel.listen();
     const input = userInput.trim().toLowerCase();
     
     if (input === '/exit' || input === '/quit') {
+      await saveCurrentSession();
       process.exit(0);
     }
 
@@ -285,6 +373,7 @@ Options:
     }
 
     if (input === '/reset' || input === '/new') {
+      await saveCurrentSession();
       sessionIndex++;
       sessionId = `session-${sessionIndex}`;
       await runner.sessionService.createSession({
