@@ -13,7 +13,8 @@ This tool lets the LLM query the current date and time
 on the client computer.
 
 ## List files tool
-List the files on the local computer.
+List the files in a directory on the agent's computer.
+Returns the name, size, and mtime of each file.
 
 - The only argument is a directory path.
 - The default path is ".", meaning the agent workspace.
@@ -34,14 +35,14 @@ For example,
 ```
 
 ## Read file tool
-This tool lets the LLM read files on the client computer.
+This tool lets the LLM read files on the agent's computer.
 
 - The only argument is the path of the file to be read
 - Absolute paths are allowed
 - Relative paths are allowed.
 
 ## Write file tool
-This tool lets the LLM write files on the client computer.
+This tool lets the LLM write files on the agent's computer.
 
 - The arguments are
     - path of the file to be written
@@ -50,7 +51,7 @@ This tool lets the LLM write files on the client computer.
 - Relative paths are allowed.
 
 ## Append file tool
-This tool lets the LLM append text to files on the client computer.
+This tool lets the LLM append text to files on the agent's computer.
 
 - The arguments are
     - `path` - path of file to be updated
@@ -84,16 +85,17 @@ Download a file from the web into the `downloads` directory of the workspace.
 If `filename` is missing, the agent will create a unique name.
 
 ## Shell tool
-Execute a shell command on the agent's host computer.
+Execute a shell command on the agent's host computer
+and return the output.
+In safe mode, show the command on the console but do not execute.
 
 - Arguments:
     - `cmd` - string; the shell command
-    - `safe` - boolean; run in "safe mode" (see below)
 - Returns an object with
     - `cmd` - string; the given shell command
     - `status` - integer; the return code from the command execution
     - `stdout` - string; the captured standard output
     - `stderr` - string; the captured standard error
 
-In *safe mode*, the tool does not actually execute the given command.
-Rather, it traces the command on the console and returns a `status` of 2.
+If the agent is running in *safe mode* (`--safe` on the command line), do not actually execute the command.
+Instead, show the command on the console and return a `status` of 2.

@@ -228,7 +228,7 @@ class LMStudioLlm extends BaseLlm {
   }
 }
 
-import { dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool } from './tools.js';
+import { dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool, shellTool, setSafeMode } from './tools.js';
 
 async function main() {
   const { values } = parseArgs({
@@ -237,6 +237,7 @@ async function main() {
       url: { type: 'string', short: 'u' },
       channel: { type: 'string', short: 'c' },
       help: { type: 'boolean', short: 'h' },
+      safe: { type: 'boolean' },
     },
     strict: false,
   });
@@ -250,8 +251,14 @@ Options:
   --channel, -c    Set the channel to use ('telegram' or 'console'). Default: telegram
   --model, -m      Set the LLM model name to use. Default: gemma-3-12b (or LM_STUDIO_MODEL env)
   --url, -u        Set the LM Studio base URL. Default: http://127.0.0.1:1234/v1 (or LM_STUDIO_BASE_URL env)
+  --safe           Operate in "safe mode". Dangerous commands are logged on the console but not executed.
 `);
     process.exit(0);
+  }
+
+  if (values.safe) {
+      setSafeMode(true);
+      console.log("Operating in safe mode.");
   }
 
   const baseUrl = (values.url as string) || process.env.LM_STUDIO_BASE_URL || "http://127.0.0.1:1234/v1";
@@ -274,7 +281,7 @@ Options:
     description: 'An AI assistant powered by LM Studio.',
     model: lmStudioLlm,
     instruction: systemInstruction,
-    tools: [dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool],
+    tools: [dateTool, listFilesTool, readFileTool, writeFileTool, appendFileTool, webSearchTool, webDownloadTool, shellTool],
   });
 
   const runner = new InMemoryRunner({

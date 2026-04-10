@@ -4,4 +4,7 @@
 #   Run the app with the Telgram channel
 #
 
-npm run build && source set-env.sh && npm start -- --channel=telegram
+if npm run build && source set-env.sh
+then
+    npm start -- --channel=telegram "$@"
+fi

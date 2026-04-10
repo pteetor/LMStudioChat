@@ -2,6 +2,15 @@ import { FunctionTool } from '@google/adk';
 import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, mkdirSync } from 'fs';
 import { z } from 'zod';
 import * as path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
+
+export let safeMode = false;
+export function setSafeMode(mode: boolean) {
+    safeMode = mode;
+}
 
 export const listFilesTool = new FunctionTool({
     name: 'list_files',
@@ -215,6 +224,42 @@ export const webDownloadTool = new FunctionTool({
             };
         } catch (error) {
             return { error: error instanceof Error ? error.message : String(error) };
+        }
+    }
+});
+
+export const shellTool = new FunctionTool({
+    name: 'shell',
+    description: 'Execute a shell command on the agent\'s host computer and return the output.',
+    parameters: z.object({
+        cmd: z.string().describe('the shell command')
+    }),
+    execute: async (args: any) => {
+        if (safeMode) {
+            console.log(`[SAFE MODE] Would execute shell command: ${args.cmd}`);
+            return {
+                cmd: args.cmd,
+                status: 2,
+                stdout: '',
+                stderr: ''
+            };
+        }
+
+        try {
+            const { stdout, stderr } = await execAsync(args.cmd);
+            return {
+                cmd: args.cmd,
+                status: 0,
+                stdout: stdout,
+                stderr: stderr
+            };
+        } catch (error: any) {
+            return {
+                cmd: args.cmd,
+                status: error.code !== undefined ? error.code : 1,
+                stdout: error.stdout || '',
+                stderr: error.stderr || error.message || String(error)
+            };
         }
     }
 });

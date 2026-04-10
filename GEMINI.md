@@ -4,6 +4,13 @@ This project is creating an LLM agent similar to the OpenClaw project.
 Code is written in TypeScript and
 uses the Google Agent Development Kit (ADK).
 
+The general requirements are defined in `SPEC.md`.
+Some specific requirements are defined in
+
+- `doc/channels.md` - Channels
+- `doc/command-line.md` - Command-line options
+- `doc/tools.md` - Agent tools
+
 ## About the agent
 The agent's name is "Maxwell".
 
