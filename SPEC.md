@@ -44,9 +44,12 @@ The user can enter these one-line commands:
 ## Command line options
 Implement the command line options described in `doc/command-line.md`.
 
+## Environment variables
+Use the `dotenv` package to initialize environment variables from the local `.env` file.
+
 ## Tools
-Create the tools defined in `doc/tools.md`
-and use the ADK to expose the tools to the LLM.
+Create the tools defined in `doc/tools.md`.
+Expose them to the LLM.
 
 ## File structure
 This is a multi-file project. TypeScript source code files are in the directory `src/`.
@@ -55,6 +58,7 @@ This is a multi-file project. TypeScript source code files are in the directory 
 - .gemini/
     - settings.json - Gemini settings
     - skills/ - Directory of skill definitions
+- .env - Environment variable definitions, *not committed to git*
 - MAXWELL.md - Directives for the user agent
 - README.md - Notes for humans
 - SPEC.md - Project specification

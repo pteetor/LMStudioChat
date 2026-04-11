@@ -58,7 +58,13 @@ export const dateTool: LocalTool = {
     name: 'get_current_date_and_time',
     description: 'Returns the current date and time on the client computer.',
     execute: () => {
-        return { dateTime: new Date().toISOString() };
+        const now = new Date();
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        return {
+            date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
+            time: `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
+            tz: Intl.DateTimeFormat().resolvedOptions().timeZone
+        };
     }
 };
 

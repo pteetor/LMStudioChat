@@ -12,18 +12,27 @@ which must defined and must be an absolute path.
 This tool lets the LLM query the current date and time
 on the client computer.
 
+- Returns a JSON object with
+    - `date` - Date in format YYYY-MM-DD
+    - `time` - Time in format HH:MM:SS
+    - `tz` - Time zone
+
 ## List files tool
 List the files in a directory on the agent's computer.
 Returns the name, size, and mtime of each file.
 
-- The only argument is a directory path.
-- The default path is ".", meaning the agent workspace.
 - Absolute paths are allowed
 - Relative paths are allowed.
 
-The tool returns a JSON array of objects, one per file,
-with keys `name`, `mtime` (modification time), and `size`.
-For example,
+- Argument
+    - A directory path; defaults to ".", meaning the agent workspace
+
+- Returns a JSON array of objects, one object per file, with
+    - `name`
+    - `size`
+    - `mtime` (modification timestamp)
+
+Example of returned value:
 
 ```json
 [

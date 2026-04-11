@@ -1,5 +1,9 @@
 import { parseArgs } from 'node:util';
 import * as fs from 'node:fs';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Suppress punycode deprecation warning
 const originalEmit = process.emit;
