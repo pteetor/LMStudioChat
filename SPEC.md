@@ -1,10 +1,9 @@
 # LM Studio chat app
 
-Write an app in typescript that lets a user chat with an LLM
+Write an app in TypeScript that lets a user chat with an LLM
 hosted on an LM Studio server.
 
-Use the Google Agent Development Kit (ADK) package for this application.
-That is important, because I want to understand how to use the ADK.
+Use an OpenAI-compatible framework for the implementation.
 
 The app will use *channels* to communicate with the user.
 The app's loop is

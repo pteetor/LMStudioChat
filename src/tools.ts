@@ -1,4 +1,3 @@
-import { FunctionTool } from '@google/adk';
 import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, mkdirSync } from 'fs';
 import { z } from 'zod';
 import * as path from 'path';
@@ -12,7 +11,14 @@ export function setSafeMode(mode: boolean) {
     safeMode = mode;
 }
 
-export const listFilesTool = new FunctionTool({
+export interface LocalTool {
+    name: string;
+    description: string;
+    parameters?: z.ZodType<any>;
+    execute: (args: any) => any | Promise<any>;
+}
+
+export const listFilesTool: LocalTool = {
     name: 'list_files',
     description: 'List the files on the local computer.',
     parameters: z.object({
@@ -46,17 +52,17 @@ export const listFilesTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
+};
 
-export const dateTool = new FunctionTool({
+export const dateTool: LocalTool = {
     name: 'get_current_date_and_time',
     description: 'Returns the current date and time on the client computer.',
     execute: () => {
         return { dateTime: new Date().toISOString() };
     }
-});
+};
 
-export const readFileTool = new FunctionTool({
+export const readFileTool: LocalTool = {
     name: 'read_file',
     description: 'Reads files on the client computer.',
     parameters: z.object({
@@ -80,9 +86,9 @@ export const readFileTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
+};
 
-export const writeFileTool = new FunctionTool({
+export const writeFileTool: LocalTool = {
     name: 'write_file',
     description: 'Writes files on the client computer.',
     parameters: z.object({
@@ -108,9 +114,9 @@ export const writeFileTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
+};
 
-export const appendFileTool = new FunctionTool({
+export const appendFileTool: LocalTool = {
     name: 'append_file',
     description: 'Appends text to files on the client computer.',
     parameters: z.object({
@@ -136,10 +142,10 @@ export const appendFileTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
+};
 
 
-export const webSearchTool = new FunctionTool({
+export const webSearchTool: LocalTool = {
     name: 'web_search',
     description: 'Searches the web using the Brave search engine.',
     parameters: z.object({
@@ -180,13 +186,14 @@ export const webSearchTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
-export const webDownloadTool = new FunctionTool({
+};
+
+export const webDownloadTool: LocalTool = {
     name: 'web_download',
     description: 'Download a file from the web into the downloads directory of the workspace.',
     parameters: z.object({
         url: z.string().describe("the file's URL"),
-        name: z.string().optional().describe("optional name for the downloaded file")
+        name: z.string().optional().nullable().describe("optional name for the downloaded file")
     }),
     execute: async (args: any) => {
         try {
@@ -226,9 +233,9 @@ export const webDownloadTool = new FunctionTool({
             return { error: error instanceof Error ? error.message : String(error) };
         }
     }
-});
+};
 
-export const shellTool = new FunctionTool({
+export const shellTool: LocalTool = {
     name: 'shell',
     description: 'Execute a shell command on the agent\'s host computer and return the output.',
     parameters: z.object({
@@ -262,4 +269,4 @@ export const shellTool = new FunctionTool({
             };
         }
     }
-});
+};
