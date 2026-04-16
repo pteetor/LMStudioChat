@@ -47,6 +47,18 @@ Implement the command line options described in `doc/command-line.md`.
 ## Environment variables
 Use the `dotenv` package to initialize environment variables from the local `.env` file.
 
+## Workspace
+The agent's computer has a directory called the *workspace*
+where the model can write files.
+These tools can access the workspace:
+
+- list_files
+- read_file
+- write_file
+- append_file
+
+The web_download tool writes the `downloads` directory in the workspace.
+
 ## Tools
 Create the tools defined in `doc/tools.md`.
 Expose them to the LLM.
@@ -74,4 +86,3 @@ This is a multi-file project. TypeScript source code files are in the directory 
     - tools.ts
 - tsconfig.json
 - workspace/
-    - downloads/ - Files downloaded by the web download tool

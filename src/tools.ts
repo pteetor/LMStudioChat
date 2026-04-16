@@ -20,9 +20,9 @@ export interface LocalTool {
 
 export const listFilesTool: LocalTool = {
     name: 'list_files',
-    description: 'List the files on the local computer.',
+    description: 'List the files in a directory on the agent\'s computer.\nReturns the name, size, and mtime of each file.',
     parameters: z.object({
-        path: z.string().default('.').describe('The directory path to list files from.')
+        path: z.string().default('.').describe('A directory path; defaults to ".", meaning the agent workspace')
     }),
     execute: (args: any) => {
         try {
@@ -56,7 +56,7 @@ export const listFilesTool: LocalTool = {
 
 export const dateTool: LocalTool = {
     name: 'get_current_date_and_time',
-    description: 'Returns the current date and time on the client computer.',
+    description: 'This tool lets the LLM query the current date and time on the client computer.',
     execute: () => {
         const now = new Date();
         const pad = (n: number) => n.toString().padStart(2, '0');
@@ -70,9 +70,9 @@ export const dateTool: LocalTool = {
 
 export const readFileTool: LocalTool = {
     name: 'read_file',
-    description: 'Reads files on the client computer.',
+    description: 'This tool lets the LLM read files on the agent\'s computer.',
     parameters: z.object({
-        filePath: z.string().describe('The path to the file to read.')
+        filePath: z.string().describe('The path of the file to be read')
     }),
     execute: (args: any) => {
         try {
@@ -96,10 +96,10 @@ export const readFileTool: LocalTool = {
 
 export const writeFileTool: LocalTool = {
     name: 'write_file',
-    description: 'Writes files on the client computer.',
+    description: 'This tool lets the LLM write files on the agent\'s computer.',
     parameters: z.object({
-        path: z.string().describe('The path to the file to write. Absolute paths are not allowed.'),
-        content: z.string().describe('The character string to be written to the file.')
+        path: z.string().describe('path of the file to be written'),
+        content: z.string().describe('character string to be written to the file')
     }),
     execute: (args: any) => {
         try {
@@ -124,10 +124,10 @@ export const writeFileTool: LocalTool = {
 
 export const appendFileTool: LocalTool = {
     name: 'append_file',
-    description: 'Appends text to files on the client computer.',
+    description: 'This tool lets the LLM append text to files on the agent\'s computer.',
     parameters: z.object({
-        path: z.string().describe('The path of the file to be updated. Absolute paths are not allowed.'),
-        content: z.string().describe('The character string to be appended to the file.')
+        path: z.string().describe('path of file to be updated'),
+        content: z.string().describe('character string to append to file')
     }),
     execute: (args: any) => {
         try {
@@ -153,7 +153,7 @@ export const appendFileTool: LocalTool = {
 
 export const webSearchTool: LocalTool = {
     name: 'web_search',
-    description: 'Searches the web using the Brave search engine.',
+    description: 'This tool lets the LLM search the web.',
     parameters: z.object({
         query: z.string().describe('search for this string')
     }),
@@ -196,10 +196,10 @@ export const webSearchTool: LocalTool = {
 
 export const webDownloadTool: LocalTool = {
     name: 'web_download',
-    description: 'Download a file from the web into the downloads directory of the workspace.',
+    description: 'Download a file from the web into the `downloads` directory of the workspace.',
     parameters: z.object({
         url: z.string().describe("the file's URL"),
-        name: z.string().optional().nullable().describe("optional name for the downloaded file")
+        filename: z.string().optional().nullable().describe("name for the downloaded file")
     }),
     execute: async (args: any) => {
         try {
@@ -214,7 +214,7 @@ export const webDownloadTool: LocalTool = {
             const downloadsDir = path.join(workspace, 'downloads');
             mkdirSync(downloadsDir, { recursive: true });
 
-            let fileName = args.name;
+            let fileName = args.filename;
             if (!fileName) {
                 fileName = `download_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
             }
@@ -243,7 +243,7 @@ export const webDownloadTool: LocalTool = {
 
 export const shellTool: LocalTool = {
     name: 'shell',
-    description: 'Execute a shell command on the agent\'s host computer and return the output.',
+    description: 'Execute a shell command on the agent\'s host computer and return the output.\nIn safe mode, show the command on the console but do not execute.',
     parameters: z.object({
         cmd: z.string().describe('the shell command')
     }),
