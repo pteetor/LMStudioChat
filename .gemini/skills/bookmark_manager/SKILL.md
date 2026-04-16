@@ -1,13 +1,13 @@
 ---
 name: bookmark-manager-skill
-description: Use this skill to save and retrieve bookmarks,
-which are URLs with tags.
+description: Use this skill to save URLs in a file and retrieve them later.
+             The saved URLs are called "bookmarks",
+             and each one has associated tags.
 ---
 
 ## File
-The bookmarks are saved in the file `workspace/bookmarks.jsonl`.
+The URLs are saved in a workspace file called `bookmarks.jsonl`.
 
-## File format
 The file format is JSONL, so each line is a valid JSON object
 and each object has two elements.
 
@@ -21,13 +21,14 @@ For example, one line might be
 ```
 
 ## Saving bookmarks
-To save a new bookmark, format the URL and tags as a one-line JSON object
-and append to the bookmarks file.
+When the user tells you to save a URL,
+format the URL and tags into a one-line JSON object
+and append the JSON object to the bookmarks file.
 
-If the user does not provide at least one tag, ask for a tag.
-If they say there is no tag, use the tag "none".
+If the user does not provide at least one tag, use the tag "none".
 
 # Searching for bookmarks
-The user can ask to search the bookmarks for a given tag.
-Use the `jq` command to search the file. Use a case-insensitive comparison.
+When the user asks to search the bookmarks for a given tag,
+use the `jq` command to search the file.
+Use a case-insensitive comparison.
 Format the matching line nicely, if any.

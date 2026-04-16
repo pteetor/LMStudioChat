@@ -1,10 +1,10 @@
 # Plan for Incorporating Skills
 
-This document outlines the architectural approach to incorporating skills from the `.agents/skills/` directory into the TypeScript LLM agent, mapped to concepts familiar to a C/C++ developer.
+This document outlines the architectural approach to incorporating skills from the `.gemini/skills/` directory into the TypeScript LLM agent, mapped to concepts familiar to a C/C++ developer.
 
 ### 1. Discovery and File Loading (The "Initialization" Phase)
 Just like reading configuration files or dynamically loading modules in C++, the agent needs to load these skills into memory at startup.
-*   **The Approach:** Use the ADK's `load_skill_from_dir()` function to automatically scan the `.agents/skills/` directory and parse the `SKILL.md` files. This replaces the need to manually walk the file system.
+*   **The Approach:** Use the ADK's `load_skill_from_dir()` function to automatically scan the `.gemini/skills/` directory and parse the `SKILL.md` files. This replaces the need to manually walk the file system.
 *   **TypeScript Concept:** Instead of manually writing asynchronous I/O logic using Node.js's `fs` (File System) module (which would be akin to using `<filesystem>` or `dirent.h` in C++), we call this library-provided function to handle the boilerplate.
 
 ### 2. Data Representation (The "Struct" Phase)
